@@ -1,0 +1,616 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Recipe Recommendations</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/style.css') }}">
+
+</head>
+
+
+<body>
+
+
+<!-- =====================================================
+     HEADER
+===================================================== -->
+
+<header>
+
+    <div class="container">
+
+        <h1>🍳 Your Recipe Recommendations</h1>
+
+        <p>
+            Personalized using ingredients, preferences
+            and Machine Learning.
+        </p>
+
+    </div>
+
+</header>
+
+
+<!-- =====================================================
+     MAIN
+===================================================== -->
+
+<main>
+
+    <div class="container">
+
+
+        <!-- =================================================
+             BACK BUTTON
+        ================================================== -->
+
+        <div class="back-section">
+
+            <a href="/"
+               class="back-button">
+
+                ← Find New Recipes
+
+            </a>
+
+        </div>
+
+
+        <!-- =================================================
+             SEARCH INFORMATION
+        ================================================== -->
+
+        <section class="search-summary">
+
+            <h2>Your Preferences</h2>
+
+            <p>
+                <strong>Ingredients:</strong>
+                {{ search_ingredients }}
+            </p>
+
+
+            {% if cuisine %}
+
+            <p>
+                <strong>Cuisine:</strong>
+                {{ cuisine }}
+            </p>
+
+            {% endif %}
+
+
+            {% if meal_type %}
+
+            <p>
+                <strong>Meal Type:</strong>
+                {{ meal_type }}
+            </p>
+
+            {% endif %}
+
+
+            {% if diet_type %}
+
+            <p>
+                <strong>Diet:</strong>
+                {{ diet_type }}
+            </p>
+
+            {% endif %}
+
+        </section>
+
+
+        <!-- =================================================
+             RECOMMENDATIONS
+        ================================================== -->
+
+        {% if recommendations %}
+
+
+        <h2 class="results-title">
+
+            Top {{ recommendations|length }}
+            Recommended Recipes
+
+        </h2>
+
+
+        <!-- =================================================
+             RECIPE GRID
+        ================================================== -->
+
+        <div class="recipe-grid">
+
+
+            {% for recipe in recommendations %}
+
+
+            <!-- =================================================
+                 ONE COMPLETE RECIPE CARD
+            ================================================== -->
+
+            <div class="recipe-card">
+
+
+                <!-- =================================================
+                     RECIPE NUMBER
+                ================================================== -->
+
+                <div class="recipe-rank">
+
+                    #{{ loop.index }}
+
+                </div>
+
+
+                <!-- =================================================
+                     RECIPE NAME
+                ================================================== -->
+
+                <h2 class="recipe-name">
+
+                    🍽️ {{ recipe.recipe_name }}
+
+                </h2>
+
+
+                <!-- =================================================
+                     SCORES
+                ================================================== -->
+
+                <div class="score-container">
+
+
+                    <div class="score-box main-score">
+
+                        <span class="score-label">
+
+                            Hybrid Score
+
+                        </span>
+
+                        <span class="score-value">
+
+                            {{ recipe.hybrid_score }}%
+
+                        </span>
+
+                    </div>
+
+
+                    <div class="score-box">
+
+                        <span class="score-label">
+
+                            🤖 ML Score
+
+                        </span>
+
+                        <span class="score-value">
+
+                            {{ recipe.ml_score }}%
+
+                        </span>
+
+                    </div>
+
+
+                    <div class="score-box">
+
+                        <span class="score-label">
+
+                            📊 Rule Score
+
+                        </span>
+
+                        <span class="score-value">
+
+                            {{ recipe.final_score }}%
+
+                        </span>
+
+                    </div>
+
+
+                    <div class="score-box">
+
+                        <span class="score-label">
+
+                            🥕 Ingredient Match
+
+                        </span>
+
+                        <span class="score-value">
+
+                            {{ recipe.ingredient_score }}%
+
+                        </span>
+
+                    </div>
+
+
+                </div>
+
+
+                <!-- =================================================
+                     RECIPE INFORMATION
+                ================================================== -->
+
+                <div class="recipe-details">
+
+
+                    <div class="detail-item">
+
+                        <strong>🌍 Cuisine</strong>
+
+                        <span>
+
+                            {{ recipe.cuisine }}
+
+                        </span>
+
+                    </div>
+
+
+                    <div class="detail-item">
+
+                        <strong>🍽 Meal</strong>
+
+                        <span>
+
+                            {{ recipe.meal_type }}
+
+                        </span>
+
+                    </div>
+
+
+                    <div class="detail-item">
+
+                        <strong>🥗 Diet</strong>
+
+                        <span>
+
+                            {{ recipe.diet_type }}
+
+                        </span>
+
+                    </div>
+
+
+                    <div class="detail-item">
+
+                        <strong>⏱ Time</strong>
+
+                        <span>
+
+                            {{ recipe.total_time }} min
+
+                        </span>
+
+                    </div>
+
+
+                    <div class="detail-item">
+
+                        <strong>🔥 Calories</strong>
+
+                        <span>
+
+                            {{ recipe.calories }}
+
+                        </span>
+
+                    </div>
+
+
+                    <div class="detail-item">
+
+                        <strong>💪 Protein</strong>
+
+                        <span>
+
+                            {{ recipe.protein }} g
+
+                        </span>
+
+                    </div>
+
+
+                    <div class="detail-item">
+
+                        <strong>⭐ Rating</strong>
+
+                        <span>
+
+                            {{ recipe.rating }}
+
+                        </span>
+
+                    </div>
+
+
+                </div>
+
+
+                <!-- =================================================
+                     AVAILABLE INGREDIENTS
+                ================================================== -->
+
+                <div class="ingredients-section available">
+
+
+                    <h3>
+
+                        ✓ You Already Have
+
+                    </h3>
+
+
+                    {% if recipe.matched_ingredients %}
+
+
+                    <div class="ingredient-tags">
+
+
+                        {% for ingredient in recipe.matched_ingredients|sort %}
+
+
+                        <span class="ingredient-tag">
+
+                            ✓ {{ ingredient }}
+
+                        </span>
+
+
+                        {% endfor %}
+
+
+                    </div>
+
+
+                    {% else %}
+
+
+                    <p>
+
+                        No matching ingredients.
+
+                    </p>
+
+
+                    {% endif %}
+
+
+                </div>
+
+
+                <!-- =================================================
+                     MISSING INGREDIENTS
+                ================================================== -->
+
+                <div class="ingredients-section missing">
+
+
+                    <h3>
+
+                        ✗ Missing Ingredients
+
+                    </h3>
+
+
+                    {% if recipe.missing_ingredients %}
+
+
+                    <div class="ingredient-tags">
+
+
+                        {% for ingredient in recipe.missing_ingredients|sort %}
+
+
+                        <span class="ingredient-tag missing-tag">
+
+                            ✗ {{ ingredient }}
+
+                        </span>
+
+
+                        {% endfor %}
+
+
+                    </div>
+
+
+                    {% else %}
+
+
+                    <p class="perfect-match">
+
+                        🎉 Perfect! You have all the ingredients.
+
+                    </p>
+
+
+                    {% endif %}
+
+
+                </div>
+
+
+                <!-- =================================================
+                     HOW TO PREPARE
+                ================================================== -->
+
+                <hr>
+
+
+                <div class="instructions-section">
+
+
+                    <h3>
+
+                        👩‍🍳 How to Prepare
+
+                    </h3>
+
+
+                    {% if recipe.instructions %}
+
+
+                    <div class="instructions">
+
+
+                        {% if recipe.instructions is string %}
+
+
+                        <p>
+
+                            {{ recipe.instructions }}
+
+                        </p>
+
+
+                        {% else %}
+
+
+                        <ol class="cooking-steps">
+
+
+                            {% for step in recipe.instructions %}
+
+
+                            <li>
+
+                                {{ step }}
+
+                            </li>
+
+
+                            {% endfor %}
+
+
+                        </ol>
+
+
+                        {% endif %}
+
+
+                    </div>
+
+
+                    {% else %}
+
+
+                    <p>
+
+                        Preparation instructions are not available.
+
+                    </p>
+
+
+                    {% endif %}
+
+
+                </div>
+
+
+                <!-- =================================================
+                     YOUTUBE VIDEO
+                ================================================== -->
+
+                <a
+                    href="https://www.youtube.com/results?search_query={{ recipe.recipe_name | urlencode }}+recipe"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="youtube-button"
+                >
+
+                    ▶ Watch Cooking Video
+
+                </a>
+
+
+            </div>
+            <!-- END OF RECIPE CARD -->
+
+
+            {% endfor %}
+
+
+        </div>
+        <!-- END OF RECIPE GRID -->
+
+
+        {% else %}
+
+
+        <!-- =================================================
+             NO RESULTS
+        ================================================== -->
+
+        <div class="no-results">
+
+
+            <h2>
+
+                😔 No Recipes Found
+
+            </h2>
+
+
+            <p>
+
+                Try adding more ingredients or removing
+                some filters.
+
+            </p>
+
+
+            <a href="/"
+               class="recommend-button">
+
+                Try Again
+
+            </a>
+
+
+        </div>
+
+
+        {% endif %}
+
+
+    </div>
+
+</main>
+
+
+<!-- =====================================================
+     FOOTER
+===================================================== -->
+
+<footer>
+
+    <p>
+
+        Smart Recipe Recommendation System
+        | Flask + MySQL + Machine Learning
+
+    </p>
+
+</footer>
+
+
+</body>
+
+</html>

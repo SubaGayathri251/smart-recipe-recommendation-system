@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Smart Recipe Recommendation System</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/style.css') }}">
+
+</head>
+
+
+<body>
+
+
+    <!-- =====================================================
+         HEADER
+    ====================================================== -->
+
+    <header>
+
+        <div class="container">
+
+            <h1>🍳 Smart Recipe Recommendation System</h1>
+
+            <p>
+                Find recipes based on your ingredients,
+                preferences and nutritional goals.
+            </p>
+
+        </div>
+
+    </header>
+
+
+    <!-- =====================================================
+         MAIN CONTENT
+    ====================================================== -->
+
+    <main>
+
+        <div class="container">
+
+
+            <!-- ERROR MESSAGE -->
+
+            {% if error %}
+
+            <div class="error-message">
+
+                {{ error }}
+
+            </div>
+
+            {% endif %}
+
+
+            <!-- RECIPE FORM -->
+
+            <section class="recommendation-card">
+
+                <h2>What would you like to cook?</h2>
+
+                <p class="subtitle">
+
+                    Enter the ingredients you currently have
+                    and select your preferences.
+
+                </p>
+
+
+                <form action="/recommend"
+                      method="POST">
+
+
+                    <!-- INGREDIENTS -->
+
+                    <div class="form-group">
+
+                        <label for="ingredients">
+
+                            Available Ingredients *
+
+                        </label>
+
+                        <textarea
+
+                            id="ingredients"
+
+                            name="ingredients"
+
+                            placeholder="Example: rice, tomato, onion, egg, paneer"
+
+                            required>
+
+                        </textarea>
+
+                        <small>
+
+                            Separate ingredients using commas.
+
+                        </small>
+
+                    </div>
+
+
+                    <!-- CUISINE + MEAL TYPE -->
+
+                    <div class="form-row">
+
+
+                        <!-- CUISINE -->
+
+                        <div class="form-group">
+
+                            <label for="cuisine">
+
+                                Cuisine Preference
+
+                            </label>
+
+                            <select
+                                id="cuisine"
+                                name="cuisine">
+
+                                <option value="">
+
+                                    Any Cuisine
+
+                                </option>
+
+                                <option value="Indian">
+
+                                    Indian
+
+                                </option>
+
+                                <option value="American">
+
+                                    American
+
+                                </option>
+
+                                <option value="Italian">
+
+                                    Italian
+
+                                </option>
+
+                                <option value="Mexican">
+
+                                    Mexican
+
+                                </option>
+
+                                <option value="Chinese">
+
+                                    Chinese
+
+                                </option>
+
+                                <option value="French">
+
+                                    French
+
+                                </option>
+
+                                <option value="Japanese">
+
+                                    Japanese
+
+                                </option>
+
+                                <option value="Thai">
+
+                                    Thai
+
+                                </option>
+
+                            </select>
+
+                        </div>
+
+
+                        <!-- MEAL TYPE -->
+
+                        <div class="form-group">
+
+                            <label for="meal_type">
+
+                                Meal Type
+
+                            </label>
+
+                            <select
+                                id="meal_type"
+                                name="meal_type">
+
+                                <option value="">
+
+                                    Any Meal
+
+                                </option>
+
+                                <option value="Breakfast">
+
+                                    Breakfast
+
+                                </option>
+
+                                <option value="Lunch">
+
+                                    Lunch
+
+                                </option>
+
+                                <option value="Dinner">
+
+                                    Dinner
+
+                                </option>
+
+                                <option value="Snack">
+
+                                    Snack
+
+                                </option>
+
+                                <option value="Dessert">
+
+                                    Dessert
+
+                                </option>
+
+                            </select>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- DIET -->
+
+                    <div class="form-group">
+
+                        <label for="diet_type">
+
+                            Diet Preference
+
+                        </label>
+
+                        <select
+                            id="diet_type"
+                            name="diet_type">
+
+                            <option value="">
+
+                                Any Diet
+
+                            </option>
+
+                            <option value="Vegetarian">
+
+                                Vegetarian
+
+                            </option>
+
+                            <option value="Non-Vegetarian">
+
+                                Non-Vegetarian
+
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+                    <!-- NUTRITION PREFERENCES -->
+
+                    <h3 class="section-title">
+
+                        Nutrition & Cooking Preferences
+
+                    </h3>
+
+
+                    <div class="form-row">
+
+
+                        <!-- MAX TIME -->
+
+                        <div class="form-group">
+
+                            <label for="max_time">
+
+                                Maximum Cooking Time
+
+                            </label>
+
+                            <input
+
+                                type="number"
+
+                                id="max_time"
+
+                                name="max_time"
+
+                                placeholder="Example: 30"
+
+                                min="1">
+
+                            <small>
+
+                                Minutes
+
+                            </small>
+
+                        </div>
+
+
+                        <!-- MAX CALORIES -->
+
+                        <div class="form-group">
+
+                            <label for="max_calories">
+
+                                Maximum Calories
+
+                            </label>
+
+                            <input
+
+                                type="number"
+
+                                id="max_calories"
+
+                                name="max_calories"
+
+                                placeholder="Example: 500"
+
+                                min="1">
+
+                            <small>
+
+                                kcal
+
+                            </small>
+
+                        </div>
+
+
+                        <!-- MIN PROTEIN -->
+
+                        <div class="form-group">
+
+                            <label for="min_protein">
+
+                                Minimum Protein
+
+                            </label>
+
+                            <input
+
+                                type="number"
+
+                                id="min_protein"
+
+                                name="min_protein"
+
+                                placeholder="Example: 20"
+
+                                min="0">
+
+                            <small>
+
+                                grams
+
+                            </small>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- SUBMIT BUTTON -->
+
+                    <button
+                        type="submit"
+                        class="recommend-button">
+
+                        🔍 Find My Recipes
+
+                    </button>
+
+
+                </form>
+
+            </section>
+
+
+            <!-- FEATURES -->
+
+            <section class="features">
+
+                <div class="feature-card">
+
+                    <div class="feature-icon">
+
+                        🥕
+
+                    </div>
+
+                    <h3>
+
+                        Ingredient Matching
+
+                    </h3>
+
+                    <p>
+
+                        Find recipes based on the ingredients
+                        you already have.
+
+                    </p>
+
+                </div>
+
+
+                <div class="feature-card">
+
+                    <div class="feature-icon">
+
+                        🤖
+
+                    </div>
+
+                    <h3>
+
+                        Machine Learning
+
+                    </h3>
+
+                    <p>
+
+                        Random Forest helps calculate
+                        intelligent recipe recommendation scores.
+
+                    </p>
+
+                </div>
+
+
+                <div class="feature-card">
+
+                    <div class="feature-icon">
+
+                        ❤️
+
+                    </div>
+
+                    <h3>
+
+                        Personalized
+
+                    </h3>
+
+                    <p>
+
+                        Recommendations consider cuisine,
+                        meal type, diet, time and nutrition.
+
+                    </p>
+
+                </div>
+
+            </section>
+
+
+        </div>
+
+    </main>
+
+
+    <!-- =====================================================
+         FOOTER
+    ====================================================== -->
+
+    <footer>
+
+        <p>
+
+            Smart Recipe Recommendation System
+            | Flask + MySQL + Machine Learning
+
+        </p>
+
+    </footer>
+
+
+</body>
+
+</html>
